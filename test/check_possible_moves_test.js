@@ -5,6 +5,7 @@ import {
   crossPossibleMoves,
   knightPossibleMoves,
   pawnPossibleMoves,
+  queenPossibleMoves,
   rookPossibleMoves,
   verticalPossibleMoves,
 } from "../src/check_possible_moves.js";
@@ -209,5 +210,73 @@ describe("checking the possible positions of the knigth", () => {
     const result = knightPossibleMoves(board, 0, 4, "white");
     const expectedResult = [[2, 3], [1, 2], [2, 5]];
     assertEquals(result, expectedResult);
+  });
+});
+
+describe("queen possible moves ", () => {
+  const board = Array.from(
+    { length: 8 },
+    () => Array.from({ length: 8 }).fill(" "),
+  );
+
+  board[1] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "black", name: "pawn" }),
+  );
+  board[6] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "white", name: "pawn" }),
+  );
+
+  it("1. queen at the starting position without other power pices", () => {
+    const result = queenPossibleMoves(board, 4, 7, "white");
+    const expectedResult = [[3, 7], [2, 7], [1, 7], [0, 7], [5, 7], [6, 7], [
+      7,
+      7,
+    ]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("2. queen at the starting position in the enemy kingdom without other power pices", () => {
+    const result = queenPossibleMoves(board, 4, 0, "white");
+    const expectedResult = [
+      [4, 1],
+      [3, 0],
+      [2, 0],
+      [1, 0],
+      [0, 0],
+      [5, 0],
+      [6, 0],
+      [7, 0],
+      [3, 1],
+      [5, 1],
+    ];
+    assertEquals(result, expectedResult);
+  });
+
+  it("3. queen is in the middle", () => {
+    const result = queenPossibleMoves(board, 4, 4, "white");
+    const expectedResult = [
+      [4, 3],
+      [4, 2],
+      [4, 1],
+      [4, 5],
+      [3, 4],
+      [2, 4],
+      [1, 4],
+      [0, 4],
+      [5, 4],
+      [6, 4],
+      [7, 4],
+      [3, 3],
+      [2, 2],
+      [1, 1],
+      [5, 3],
+      [6, 2],
+      [7, 1],
+      [3, 5],
+      [5, 5],
+    ];
+    assertEquals(result , expectedResult);
   });
 });

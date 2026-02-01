@@ -8,9 +8,9 @@ const checkAdjacentOFpawn = (board, row, col, color, possibleMoves) => {
 };
 
 const enemyColor = (color) => {
-  if (color === 'white') return 'black';
-  return 'white';
-}
+  if (color === "white") return "black";
+  return "white";
+};
 
 export const crossPossibleMoves = (
   board,
@@ -104,19 +104,39 @@ export const bishopPossibleMoves = (board, col, row, color) => {
   return possibleMoves;
 };
 
-export const knightPossibleMoves = (board , col ,row, color) => {
+export const knightPossibleMoves = (board, col, row, color) => {
   const possibleMoves = [];
-  const maxPossibel = [[-2,-1], [2,-1],[-1,-2],[1,-2],[-2,1],[2,1],[-1,2],[1,2]];
+  const maxPossibel = [[-2, -1], [2, -1], [-1, -2], [1, -2], [-2, 1], [2, 1], [
+    -1,
+    2,
+  ], [1, 2]];
   for (const position of maxPossibel) {
     const currentCol = col + position[0];
     const currentRow = row + position[1];
     try {
-      if(board[currentRow][currentCol] === ' ')
-        possibleMoves.push([currentCol , currentRow]);
-      if(board[currentRow][currentCol] !== undefined &&
-        board[currentRow][currentCol].playerColor === enemyColor(color)) 
-        possibleMoves.push([currentCol , currentRow]);
-    } catch { }
+      if (board[currentRow][currentCol] === " ") {
+        possibleMoves.push([currentCol, currentRow]);
+      }
+      if (
+        board[currentRow][currentCol] !== undefined &&
+        board[currentRow][currentCol].playerColor === enemyColor(color)
+      ) {
+        possibleMoves.push([currentCol, currentRow]);
+      }
+    } catch {}
   }
-  return possibleMoves
-}
+  return possibleMoves;
+};
+
+export const queenPossibleMoves = (board, col, row, color) => {
+  const possibleMoves = [];
+  straightPossibleMoves(board, row, col, color, possibleMoves, -1);
+  straightPossibleMoves(board, row, col, color, possibleMoves, 1);
+  verticalPossibleMoves(board, row, col, color, possibleMoves, -1);
+  verticalPossibleMoves(board, row, col, color, possibleMoves, 1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, -1, -1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, -1, 1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, 1, -1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, 1, 1);
+  return possibleMoves;
+};

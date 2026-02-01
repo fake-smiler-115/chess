@@ -1,6 +1,6 @@
 import { describe, it } from "@std/testing/bdd";
-import { assertEquals } from "@std/assert";
-import { pawnPossibleMoves } from "../src/check_possible_moves.js";
+import { assertAlmostEquals, assertEquals } from "@std/assert";
+import { pawnPossibleMoves, rookPossibleMoves, verticalPossibleMoves } from "../src/check_possible_moves.js";
 
 describe("checking the moves of the pawn", () => {
   const board = Array.from(
@@ -47,3 +47,49 @@ describe("checking the moves of the pawn", () => {
     assertEquals(result, expectedResult);
   });
 });
+
+describe('checking the possible moves of the rook', () => {
+  const board = Array.from(
+    { length: 8 },
+    () => Array.from({ length: 8 }).fill(" "),
+  );
+
+  board[1] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "black", name: "pawn" }),
+  );
+  board[6] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "white", name: "pawn" }),
+  );
+
+  it('1. vertical is free', () => {
+    const result = verticalPossibleMoves(board, 7,7,'white',[], -1);
+    const expectedResult = [[0,7],[1,7],[2,7],[3,7],[4,7],[5,7],[6,7]].reverse();
+    assertEquals(result, expectedResult);
+  });
+
+   it('3.. vertical is rigth', () => {
+    const result = verticalPossibleMoves(board, 7,4,'white',[], 1);    
+    const expectedResult = [[5,7],[6,7],[7,7]];
+    assertEquals(result, expectedResult);
+  });
+
+  it ('2. rook is in miidle ', () => {
+    const result = rookPossibleMoves(board, 4,7,'white');
+    const expectedResult = [[3,7],[2,7],[1,7],[0,7],[5,7],[6,7],[7,7]];
+    assertEquals(result, expectedResult);
+  })
+
+   it ('4. rook is in miidle of the board ', () => {
+    const result = rookPossibleMoves(board, 4,4,'white');
+    const expectedResult = [[4,3],[4,2],[4,1],[4,5],[3,4],[2,4],[1,4],[0,4],[5,4],[6,4],[7,4]];
+    assertEquals(result, expectedResult);
+  });
+
+  it ('5. rook is in others kingdom', () => {
+    const result = rookPossibleMoves(board, 1,0,'white');
+    const expectedResult = [[1,1],[0,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0]];
+    assertEquals(result, expectedResult);
+  });
+})

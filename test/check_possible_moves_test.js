@@ -2,7 +2,8 @@ import { describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
 import {
   bishopPossibleMoves,
-  forwardPossibleMoves,
+  crossPossibleMoves,
+  knightPossibleMoves,
   pawnPossibleMoves,
   rookPossibleMoves,
   verticalPossibleMoves,
@@ -142,22 +143,71 @@ describe("checking the bishop possible positions", () => {
     assertEquals(result, expectedResult);
   });
 
-  it('2. checking the forward right positions', () => {
+  it("2. checking the forward right positions", () => {
     const possibleMoves = [];
-    forwardPossibleMoves(board, 4,4,'white', possibleMoves, -1 , 1);
-    const expectedResult = [[5,3],[6,2],[7,1]];
+    crossPossibleMoves(board, 4, 4, "white", possibleMoves, -1, 1);
+    const expectedResult = [[5, 3], [6, 2], [7, 1]];
     assertEquals(possibleMoves, expectedResult);
-  })
+  });
 
-  it('3. bishop in the middle of the grid', () => {
+  it("3. bishop in the middle of the grid", () => {
     const result = bishopPossibleMoves(board, 4, 4, "white");
-    const expectedResult = [[3,3],[2,2],[1,1],[5,3],[6,2],[7,1],[3,5],[5,5]];
+    const expectedResult = [[3, 3], [2, 2], [1, 1], [5, 3], [6, 2], [7, 1], [
+      3,
+      5,
+    ], [5, 5]];
     assertEquals(result, expectedResult);
   });
 
-  it('4. bishop is in right corner 4 ,7', () => {
-    const result = bishopPossibleMoves(board, 7,4, "white");
-    const expectedResult = [[6,3],[5,2],[4,1],[6,5]];
+  it("4. bishop is in right corner 4 ,7", () => {
+    const result = bishopPossibleMoves(board, 7, 4, "white");
+    const expectedResult = [[6, 3], [5, 2], [4, 1], [6, 5]];
+    assertEquals(result, expectedResult);
+  });
+});
+
+describe("checking the possible positions of the knigth", () => {
+  const board = Array.from(
+    { length: 8 },
+    () => Array.from({ length: 8 }).fill(" "),
+  );
+
+  board[1] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "black", name: "pawn" }),
+  );
+  board[6] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "white", name: "pawn" }),
+  );
+
+  it("1. knight at the starting position", () => {
+    const result = knightPossibleMoves(board, 6, 7, "white");
+    const expectedResult = [[5, 5], [7, 5]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("2. knight at the enemy starting position", () => {
+    const result = knightPossibleMoves(board, 1, 0, "white");
+    const expectedResult = [[3, 1], [0, 2], [2, 2]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("3. knight near white pawn row", () => {
+    const result = knightPossibleMoves(board, 4, 7, "white");
+    const expectedResult = [[3, 5], [5, 5]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("4. knight near black pawn row", () => {
+    const result = knightPossibleMoves(board, 3, 0, "white");
+    const expectedResult = [[1, 1], [5, 1], [2, 2], [4, 2]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("5. knight at left edge (non-corner)", () => {
+    const result = knightPossibleMoves(board, 0, 4, "white");
+    const expectedResult = [[2, 3], [1, 2], [2, 5]];
     assertEquals(result, expectedResult);
   });
 });

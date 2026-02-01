@@ -7,7 +7,12 @@ const checkAdjacentOFpawn = (board, row, col, color, possibleMoves) => {
   }
 };
 
-export const forwardPossibleMoves = (
+const enemyColor = (color) => {
+  if (color === 'white') return 'black';
+  return 'white';
+}
+
+export const crossPossibleMoves = (
   board,
   row,
   col,
@@ -18,7 +23,7 @@ export const forwardPossibleMoves = (
 ) => {
   let currentCol = col + colMove;
   for (let i = row + value; (i > -1 && i < 8); i += value) {
-    if(board[i][currentCol] === undefined) return;
+    if (board[i][currentCol] === undefined) return;
     if (
       board[i][currentCol] !== " " && board[i][currentCol].playerColor === color
     ) return;
@@ -92,9 +97,26 @@ export const rookPossibleMoves = (board, col, row, color) => {
 
 export const bishopPossibleMoves = (board, col, row, color) => {
   const possibleMoves = [];
-  forwardPossibleMoves(board, row, col, color, possibleMoves, -1, -1);
-  forwardPossibleMoves(board, row, col, color, possibleMoves, -1, 1);
-  forwardPossibleMoves(board, row, col, color, possibleMoves, 1, -1);
-  forwardPossibleMoves(board, row, col, color, possibleMoves, 1, 1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, -1, -1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, -1, 1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, 1, -1);
+  crossPossibleMoves(board, row, col, color, possibleMoves, 1, 1);
   return possibleMoves;
 };
+
+export const knightPossibleMoves = (board , col ,row, color) => {
+  const possibleMoves = [];
+  const maxPossibel = [[-2,-1], [2,-1],[-1,-2],[1,-2],[-2,1],[2,1],[-1,2],[1,2]];
+  for (const position of maxPossibel) {
+    const currentCol = col + position[0];
+    const currentRow = row + position[1];
+    try {
+      if(board[currentRow][currentCol] === ' ')
+        possibleMoves.push([currentCol , currentRow]);
+      if(board[currentRow][currentCol] !== undefined &&
+        board[currentRow][currentCol].playerColor === enemyColor(color)) 
+        possibleMoves.push([currentCol , currentRow]);
+    } catch { }
+  }
+  return possibleMoves
+}

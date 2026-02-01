@@ -1,10 +1,22 @@
-const getSymbol =(char , value) => {
-  if(char === '') {
-    return value % 2 ? '⬜️' : '⬛️';
+const getPiecesSymbol = (name, color) => {
+  const pieces = {
+    'pawn' : '♟️',
+    'rook' : '♜'.padEnd(2),
+    'knight' : '♘'.padEnd(2),
+    'bishop' : '♝'.padEnd(2),
+    'queen' : '♕'.padEnd(2),
+    'king' : '♔'.padEnd(2)
   }
+  if (color === 'black')
+  return pieces[name];
 }
 
-const drawBoard = (board) => {
+const getSymbol =(char , value) => {
+  if (char === ' ') return value % 2 ? '⬛️' : '⬜️';
+  return getPiecesSymbol(char.name, 'black')
+} 
+
+export const drawBoard = (board) => {
   let stringBoard = '';
 
   for (let i = 0; i < board.length; i++) {

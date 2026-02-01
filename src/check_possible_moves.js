@@ -7,6 +7,32 @@ const checkAdjacentOFpawn = (board, row, col, color, possibleMoves) => {
   }
 };
 
+export const forwardPossibleMoves = (
+  board,
+  row,
+  col,
+  color,
+  possibleMoves,
+  value,
+  colMove,
+) => {
+  let currentCol = col + colMove;
+  for (let i = row + value; (i > -1 && i < 8); i += value) {
+    if(board[i][currentCol] === undefined) return;
+    if (
+      board[i][currentCol] !== " " && board[i][currentCol].playerColor === color
+    ) return;
+    if (
+      board[i][currentCol] !== " " && board[i][currentCol].playerColor !== color
+    ) {
+      possibleMoves.push([currentCol, i]);
+      return;
+    }
+    possibleMoves.push([currentCol, i]);
+    currentCol += colMove;
+  }
+};
+
 export const straightPossibleMoves = (
   board,
   row,
@@ -15,13 +41,13 @@ export const straightPossibleMoves = (
   possibleMoves,
   value,
 ) => {
-  for (let i = row + value; (i > -1 && i < 8)  ; i += value) {
+  for (let i = row + value; (i > -1 && i < 8); i += value) {
     if (board[i][col] !== " " && board[i][col].playerColor === color) return;
     if (board[i][col] !== " " && board[i][col].playerColor !== color) {
-      possibleMoves.push([col ,i])
-      return ;
+      possibleMoves.push([col, i]);
+      return;
     }
-    possibleMoves.push([col ,i]);
+    possibleMoves.push([col, i]);
   }
 };
 
@@ -36,8 +62,8 @@ export const verticalPossibleMoves = (
   for (let i = col + value; (i > -1 && i < 8); i += value) {
     if (board[row][i] !== " " && board[row][i].playerColor === color) return;
     if (board[row][i] !== " " && board[row][i].playerColor !== color) {
-      possibleMoves.push([ i, row]);
-      return ;
+      possibleMoves.push([i, row]);
+      return;
     }
     possibleMoves.push([i, row]);
   }
@@ -61,5 +87,14 @@ export const rookPossibleMoves = (board, col, row, color) => {
   straightPossibleMoves(board, row, col, color, possibleMoves, 1);
   verticalPossibleMoves(board, row, col, color, possibleMoves, -1);
   verticalPossibleMoves(board, row, col, color, possibleMoves, 1);
+  return possibleMoves;
+};
+
+export const bishopPossibleMoves = (board, col, row, color) => {
+  const possibleMoves = [];
+  forwardPossibleMoves(board, row, col, color, possibleMoves, -1, -1);
+  forwardPossibleMoves(board, row, col, color, possibleMoves, -1, 1);
+  forwardPossibleMoves(board, row, col, color, possibleMoves, 1, -1);
+  forwardPossibleMoves(board, row, col, color, possibleMoves, 1, 1);
   return possibleMoves;
 };

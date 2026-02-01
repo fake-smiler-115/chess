@@ -1,8 +1,9 @@
-export function add(a: number, b: number): number {
-  return a + b;
+import { createBoard } from "./src/create_board_array.js";
+
+const main = () => {
+  const board = createBoard();
+  console.log(board);
+  
 }
 
-// Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
-if (import.meta.main) {
-  console.log("Add 2 + 3 =", add(2, 3));
-}
+main()

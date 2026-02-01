@@ -1,7 +1,7 @@
 const checkAdjacentOFpawn = (board, row, col, color, possibleMoves) => {
   if (
     ![" ", undefined].includes(board[row][col]) &&
-    (board[row][col].playerColor !== color)
+    (board[row][col].playerColor === enemyColor(color))
   ) {
     possibleMoves.push([col, row]);
   }
@@ -28,7 +28,7 @@ export const crossPossibleMoves = (
       board[i][currentCol] !== " " && board[i][currentCol].playerColor === color
     ) return;
     if (
-      board[i][currentCol] !== " " && board[i][currentCol].playerColor !== color
+      board[i][currentCol] !== " " && board[i][currentCol].playerColor === enemyColor(color)
     ) {
       possibleMoves.push([currentCol, i]);
       return;
@@ -48,7 +48,7 @@ export const straightPossibleMoves = (
 ) => {
   for (let i = row + value; (i > -1 && i < 8); i += value) {
     if (board[i][col] !== " " && board[i][col].playerColor === color) return;
-    if (board[i][col] !== " " && board[i][col].playerColor !== color) {
+    if (board[i][col] !== " " && board[i][col].playerColor === enemyColor(color)) {
       possibleMoves.push([col, i]);
       return;
     }
@@ -66,7 +66,7 @@ export const verticalPossibleMoves = (
 ) => {
   for (let i = col + value; (i > -1 && i < 8); i += value) {
     if (board[row][i] !== " " && board[row][i].playerColor === color) return;
-    if (board[row][i] !== " " && board[row][i].playerColor !== color) {
+    if (board[row][i] !== " " && board[row][i].playerColor === enemyColor(color)) {
       possibleMoves.push([i, row]);
       return;
     }

@@ -3,6 +3,7 @@ import { assertEquals } from "@std/assert";
 import {
   bishopPossibleMoves,
   crossPossibleMoves,
+  kingPossibleMoves,
   knightPossibleMoves,
   pawnPossibleMoves,
   queenPossibleMoves,
@@ -277,6 +278,42 @@ describe("queen possible moves ", () => {
       [3, 5],
       [5, 5],
     ];
-    assertEquals(result , expectedResult);
+    assertEquals(result, expectedResult);
+  });
+});
+
+describe("checking the possible moves of the king", () => {
+  const board = Array.from(
+    { length: 8 },
+    () => Array.from({ length: 8 }).fill(" "),
+  );
+
+  board[1] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "black", name: "pawn" }),
+  );
+  board[6] = Array.from(
+    { length: 8 },
+    () => ({ playerColor: "white", name: "pawn" }),
+  );
+  it("1.king is at its position with out the other power pieces", () => {
+    const result = kingPossibleMoves(board, 4, 7, "white");
+    const expectedResult = [[3, 7], [5, 7]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("2. white king is at the black king position", () => {
+    const result = kingPossibleMoves(board, 4, 0, "white");
+    const expectedResult = [[3, 1], [4, 1], [5, 1], [3, 0], [5, 0]];
+    assertEquals(result, expectedResult);
+  });
+
+  it("3. king is in the center", () => {
+    const result = kingPossibleMoves(board, 4, 4, "white");
+    const expectedResult = [[3, 5], [4, 5], [5, 5], [3, 4], [5, 4], [3, 3], [
+      4,
+      3,
+    ], [5, 3]];
+    assertEquals(result, expectedResult);
   });
 });

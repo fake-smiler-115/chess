@@ -12,6 +12,14 @@ const enemyColor = (color) => {
   return "white";
 };
 
+const value = (board, col, row) => {
+  try {
+    return board[row][col];
+  } catch {
+    return undefined;
+  }
+};
+
 export const crossPossibleMoves = (
   board,
   row,
@@ -28,7 +36,8 @@ export const crossPossibleMoves = (
       board[i][currentCol] !== " " && board[i][currentCol].playerColor === color
     ) return;
     if (
-      board[i][currentCol] !== " " && board[i][currentCol].playerColor === enemyColor(color)
+      board[i][currentCol] !== " " &&
+      board[i][currentCol].playerColor === enemyColor(color)
     ) {
       possibleMoves.push([currentCol, i]);
       return;
@@ -48,7 +57,9 @@ export const straightPossibleMoves = (
 ) => {
   for (let i = row + value; (i > -1 && i < 8); i += value) {
     if (board[i][col] !== " " && board[i][col].playerColor === color) return;
-    if (board[i][col] !== " " && board[i][col].playerColor === enemyColor(color)) {
+    if (
+      board[i][col] !== " " && board[i][col].playerColor === enemyColor(color)
+    ) {
       possibleMoves.push([col, i]);
       return;
     }
@@ -66,7 +77,9 @@ export const verticalPossibleMoves = (
 ) => {
   for (let i = col + value; (i > -1 && i < 8); i += value) {
     if (board[row][i] !== " " && board[row][i].playerColor === color) return;
-    if (board[row][i] !== " " && board[row][i].playerColor === enemyColor(color)) {
+    if (
+      board[row][i] !== " " && board[row][i].playerColor === enemyColor(color)
+    ) {
       possibleMoves.push([i, row]);
       return;
     }
@@ -113,17 +126,15 @@ export const knightPossibleMoves = (board, col, row, color) => {
   for (const position of maxPossibel) {
     const currentCol = col + position[0];
     const currentRow = row + position[1];
-    try {
-      if (board[currentRow][currentCol] === " ") {
-        possibleMoves.push([currentCol, currentRow]);
-      }
-      if (
-        board[currentRow][currentCol] !== undefined &&
-        board[currentRow][currentCol].playerColor === enemyColor(color)
-      ) {
-        possibleMoves.push([currentCol, currentRow]);
-      }
-    } catch {}
+    if (value(board, currentCol, currentRow) === " ") {
+      possibleMoves.push([currentCol, currentRow]);
+    }
+    if (
+      value(board, currentCol, currentRow) !== undefined &&
+      value(board, currentCol, currentRow).playerColor === enemyColor(color)
+    ) {
+      possibleMoves.push([currentCol, currentRow]);
+    }
   }
   return possibleMoves;
 };
@@ -138,5 +149,27 @@ export const queenPossibleMoves = (board, col, row, color) => {
   crossPossibleMoves(board, row, col, color, possibleMoves, -1, 1);
   crossPossibleMoves(board, row, col, color, possibleMoves, 1, -1);
   crossPossibleMoves(board, row, col, color, possibleMoves, 1, 1);
+  return possibleMoves;
+};
+
+export const kingPossibleMoves = (board, col, row, color) => {
+  const possibleMoves = [];
+  const maxPossible = [[-1, 1], [0, 1], [1, 1], [-1, 0], [1, 0], [-1, -1], [
+    0,
+    -1,
+  ], [1, -1]];
+  for (const position of maxPossible) {
+    const currentCol = col + position[0];
+    const currentRow = row + position[1];
+    if (value(board, currentCol, currentRow) === " ") {
+      possibleMoves.push([currentCol, currentRow]);
+    }
+    if (
+      value(board, currentCol, currentRow) !== undefined &&
+      value(board, currentCol, currentRow).playerColor === enemyColor(color)
+    ) {
+      possibleMoves.push([currentCol, currentRow]);
+    }
+  }
   return possibleMoves;
 };

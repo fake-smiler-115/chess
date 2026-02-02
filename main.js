@@ -6,6 +6,7 @@ import {
   queenPossibleMoves,
   rookPossibleMoves,
 } from "./src/check_possible_moves.js";
+import { checkToKing } from "./src/checkMates.js";
 import { createBoard } from "./src/create_board_array.js";
 import { drawBoard } from "./src/draw_board.js";
 import { nextMove } from "./src/play_game.js";
@@ -20,13 +21,25 @@ const references = {
   "king": kingPossibleMoves,
 };
 
-const main = async() => {
+const main = async () => {
+  const colors = ['black', 'white'];
   const playerId = [0];
   let board = createBoard();
   while (true) {
+    const colorId = playerId[0];
     drawBoard(board);
-    await nextMove(board, playerId, references);
-    // readPositions();
+    let dummyBoard = board.map((x) => x.map((x) => x));
+    const isCheck = checkToKing(board, colors[colorId], references);
+    if (isCheck) {
+      console.log("check", isCheck);
+    }
+
+    const result = await nextMove(dummyBoard, playerId, references);
+    if (result && checkToKing(dummyBoard, colors[colorId], references)) {
+      playerId[0] = 1 - playerId[0];
+      continue;
+    }
+    board = dummyBoard;
   }
 };
 

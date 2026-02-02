@@ -1,15 +1,6 @@
 import { drawBoard } from "./draw_board.js";
 import { readPositions } from "./read_positions.js";
 
-const getTheMoveOfPlayer = (color) => {
-  const piecePosition = prompt("piece position");
-  const [col, row] = piecePosition.split(" ").map((x) => +x);
-  if (color === 'white') {
-    return [col, row];
-  }
-   return [7 -col , 7 - row];
-};
-
 const isvalidMove = (board, col, row, color) => {
   if (board[row][col].playerColor === color) return true;
   return false;
@@ -28,7 +19,7 @@ const drawBluePoints = (board, possibleMoves, color) => {
   drawBoard(reverseTheBoard(dummyBoard));
 }
 
-const reverseTheBoard = (board) => {
+export const reverseTheBoard = (board) => {
   const dummyBoard = [...board];
   const reversedBoard = dummyBoard.reverse().map((x) => x.reverse());
   return reversedBoard;
@@ -40,8 +31,9 @@ export const nextMove = async (board, playerId, references) => {
   }
 
   const reversedBoard = reverseTheBoard(board);
-  await playGame(reversedBoard, playerId, references, "black");
+  const result = await playGame(reversedBoard, playerId, references, "black");
   board = reverseTheBoard(board);
+  return result;
 };
 
 export const playGame = async (board, playerId, references, color) => {
@@ -59,7 +51,7 @@ export const playGame = async (board, playerId, references, color) => {
       board[placeRow][placeCol] = board[row][col];
       board[row][col] = " ";
       playerId[0] = 1 - playerId[0];
-      return;
+      return true;
     }
   }
 };

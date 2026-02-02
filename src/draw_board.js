@@ -5,7 +5,8 @@ const getPiecesSymbol = (name, color) => {
     'knight' : '♘'.padEnd(2),
     'bishop' : '♝'.padEnd(2),
     'queen' : '♕'.padEnd(2),
-    'king' : '♔'.padEnd(2)
+    'king' : '♔'.padEnd(2),
+    'p' : '🔵'
   }
   if (color === 'black')
   return pieces[name];
@@ -26,6 +27,6 @@ export const drawBoard = (board) => {
     }
     stringBoard += '\n';
   }
-
+  console.clear();
   console.log(stringBoard);
 };

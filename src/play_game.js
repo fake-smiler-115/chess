@@ -1,4 +1,5 @@
 import { drawBoard } from "./draw_board.js";
+import { readPositions } from "./read_positions.js";
 
 const getTheMoveOfPlayer = (color) => {
   const piecePosition = prompt("piece position");
@@ -14,14 +15,17 @@ const isvalidMove = (board, col, row, color) => {
   return false;
 };
 
-const drawBluePoints = (board, possibleMoves) => {
+const drawBluePoints = (board, possibleMoves, color) => {
   const dummyBoard= board.map(x => x.map(x => x));
   for (const move of possibleMoves) {
     const col = move[0];
     const row = move[1];
     dummyBoard[row][col] = {name : 'p'};
   }
-  drawBoard(dummyBoard);
+  if (color === 'white') {
+    return drawBoard(dummyBoard);
+  }
+  drawBoard(reverseTheBoard(dummyBoard));
 }
 
 const reverseTheBoard = (board) => {
@@ -30,26 +34,26 @@ const reverseTheBoard = (board) => {
   return reversedBoard;
 }
 
-export const nextMove = (board, playerId, references) => {
+export const nextMove = async (board, playerId, references) => {
   if (playerId[0] === 0) {
-    return playGame(board, playerId, references, "white");
+    return await playGame(board, playerId, references, "white");
   }
 
   const reversedBoard = reverseTheBoard(board);
-  playGame(reversedBoard, playerId, references, "black");
+  await playGame(reversedBoard, playerId, references, "black");
   board = reverseTheBoard(board);
 };
 
-export const playGame = (board, playerId, references, color) => {
-  const [col, row] = getTheMoveOfPlayer(color);
+export const playGame = async (board, playerId, references, color) => {
+  const [col, row] = await readPositions(color);
   const isValid = isvalidMove(board, col, row, color);
   if (!isValid) {
     return console.log("invalid piece");
   }
   const pieceName = board[row][col].name;
   const possibleMoves = references[pieceName](board, col, row, color);
-  // drawBluePoints(board, possibleMoves, color);
-  const [placeCol, placeRow] = getTheMoveOfPlayer(color);
+  drawBluePoints(board, possibleMoves, color);
+  const [placeCol, placeRow] = await readPositions(color);
   for (const move of possibleMoves) {
     if (move[0] === placeCol && move[1] === placeRow) {
       board[placeRow][placeCol] = board[row][col];

@@ -45,3 +45,28 @@ export const checkToKing = (board, color, references) => {
   )
     .length > 0;
 };
+
+export const isThereMoves = (board, color, references, otherColor) => {
+  let boardAccordingColor = board.map((x) => x.map((x) => x));
+  if (color === 'black') {
+   boardAccordingColor = reverseTheBoard(boardAccordingColor);
+  }
+  const allPieces = allColorPieces(boardAccordingColor, color);
+  for (const piece of allPieces) {
+    const col = piece[0];
+    const row = piece[1];
+    const pieceName = boardAccordingColor[row][col].name;
+    const possibleMoves = references[pieceName](boardAccordingColor, col, row, color);
+    for (const move of possibleMoves) {
+      const dummyBoard = boardAccordingColor.map((x) => x.map((x) => x));
+      const moveCol = move[0];
+      const moveRow = move[1];
+      const pieceDetails = dummyBoard[row][col];
+      dummyBoard[row][col] = ' ';
+      dummyBoard[moveRow][moveCol] = pieceDetails;
+      if (!checkToKing(dummyBoard,otherColor ,references)) {
+        return true;
+      }
+    }
+  }
+}

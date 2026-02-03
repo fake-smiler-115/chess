@@ -91,7 +91,7 @@ export const verticalPossibleMoves = (
 export const pawnPossibleMoves = (board, col, row, color) => {
   const possibleMoves = [];
   if (board[row - 1][col] === " ") possibleMoves.push([col, row - 1]);
-  if (board[row - 2][col] === " " && row === 6 && board[row - 1][col] === " ") {
+  if (row === 6 && board[row - 2][col] === " " &&  board[row - 1][col] === " ") {
     possibleMoves.push([col, row - 2]);
   }
   checkAdjacentOFpawn(board, row - 1, col - 1, color, possibleMoves);

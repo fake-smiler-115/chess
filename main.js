@@ -6,7 +6,7 @@ import {
   queenPossibleMoves,
   rookPossibleMoves,
 } from "./src/check_possible_moves.js";
-import { checkToKing } from "./src/checkMates.js";
+import { checkToKing, isThereMoves } from "./src/checkMates.js";
 import { createBoard } from "./src/create_board_array.js";
 import { drawBoard } from "./src/draw_board.js";
 import { nextMove } from "./src/play_game.js";
@@ -32,6 +32,9 @@ const main = async () => {
     const isCheck = checkToKing(board, colors[colorId], references);
     if (isCheck) {
       console.log("check", isCheck);
+      if (!isThereMoves(board, colors[1 - colorId],references,  colors[colorId] )) {
+        return console.log(`${colors[colorId]} won the game !`);
+      }
     }
 
     const result = await nextMove(dummyBoard, playerId, references);

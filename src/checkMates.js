@@ -13,7 +13,7 @@ const allColorPieces = (board, color) => {
 };
 
 const oppositeKingPosition = (board, pieceColor) => {
-  let color = 'white';
+  let color = "white";
   if (pieceColor === "white") color = "black";
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
@@ -35,7 +35,7 @@ export const checkToKing = (board, color, references) => {
   const possibleMoves = allPieces.flatMap(([col, row, name]) =>
     references[name](dummyBoard, col, row, color)
   );
-  const [kingCol, kingRow] = oppositeKingPosition(dummyBoard, color); 
+  const [kingCol, kingRow] = oppositeKingPosition(dummyBoard, color);
   if (color === "black") {
     dummyBoard = reverseTheBoard(board);
   }
@@ -48,25 +48,33 @@ export const checkToKing = (board, color, references) => {
 
 export const isThereMoves = (board, color, references, otherColor) => {
   let boardAccordingColor = board.map((x) => x.map((x) => x));
-  if (color === 'black') {
-   boardAccordingColor = reverseTheBoard(boardAccordingColor);
+  if (color === "black") {
+    boardAccordingColor = reverseTheBoard(boardAccordingColor);
   }
   const allPieces = allColorPieces(boardAccordingColor, color);
   for (const piece of allPieces) {
     const col = piece[0];
     const row = piece[1];
     const pieceName = boardAccordingColor[row][col].name;
-    const possibleMoves = references[pieceName](boardAccordingColor, col, row, color);
+    const possibleMoves = references[pieceName](
+      boardAccordingColor,
+      col,
+      row,
+      color,
+    );
     for (const move of possibleMoves) {
-      const dummyBoard = boardAccordingColor.map((x) => x.map((x) => x));
+      let dummyBoard = boardAccordingColor.map((x) => x.map((x) => x));
       const moveCol = move[0];
       const moveRow = move[1];
       const pieceDetails = dummyBoard[row][col];
-      dummyBoard[row][col] = ' ';
+      dummyBoard[row][col] = " ";
       dummyBoard[moveRow][moveCol] = pieceDetails;
-      if (!checkToKing(dummyBoard,otherColor ,references)) {
+      if (otherColor === "black") {
+        dummyBoard = reverseTheBoard(dummyBoard);
+      }
+      if (!checkToKing(dummyBoard, otherColor, references)) {
         return true;
       }
     }
   }
-}
+};

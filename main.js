@@ -20,13 +20,29 @@ const references = {
   "king": kingPossibleMoves,
 };
 
+const init = async () => {
+  const connections = [];
+  const listner = Deno.listen({port : 8000});
+  for await (const conn of listner) {
+    connections.push(conn);
+    console.log('one player conected ');
+    
+    if (connections.length === 2) {
+      return connections;
+    }
+  }
+}
+
+const encoder = new TextEncoder()
+
 const main = async () => {
   const colors = ['black', 'white'];
   const playerId = [0];
+  const conns = await init();
   let board = createBoard();
   while (true) {
     const colorId = playerId[0];
-    drawBoard(board);
+    await conns[colorId].write(encoder.encode(JSON.stringify(board)));
     let dummyBoard = board.map((x) => x.map((x) => x));
     const isCheck = checkToKing(board, colors[colorId], references);
     if (isCheck) {
@@ -36,12 +52,13 @@ const main = async () => {
       }
     }
 
-    const result = await playGame(dummyBoard, playerId, references, colors[1 - colorId]);
+    const result = await playGame(conns[colorId] , dummyBoard, playerId, references, colors[1 - colorId]);
     if (result && checkToKing(dummyBoard, colors[colorId], references)) {
       playerId[0] = 1 - playerId[0];
       continue;
     }
     board = dummyBoard;
+    await conns[colorId].write(encoder.encode(JSON.stringify(board)));
   }
 };
 

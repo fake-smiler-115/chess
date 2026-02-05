@@ -16,16 +16,24 @@ const drawBluePoints = (board, possibleMoves) => {
      drawBoard(dummyBoard);
 }
 
-export const playGame = async (board, playerId, references, color) => {
-  const [col, row] = await readPositions();
+const getThePositions = async(board, references, color) => {
+const [col, row] = await readPositions();
   const isValid = isvalidMove(board, col, row, color);
   if (!isValid) {
-    return console.log("invalid piece");
+     console.log("invalid piece");
+     return [false];
   }
   const pieceName = board[row][col].name;
   const possibleMoves = references[pieceName](board, col, row, color);
   drawBluePoints(board, possibleMoves, color);
   const [placeCol, placeRow] = await readPositions();
+  return [true , col, row, placeCol, placeRow, possibleMoves]
+}
+
+export const playGame = async (board, playerId, references, color) => {
+  const result = await getThePositions(board, references, color);
+  const [isValid , col, row, placeCol, placeRow, possibleMoves] = result;
+  if (!isValid) return false;
   for (const move of possibleMoves) {
     if (move[0] === placeCol && move[1] === placeRow) {
       board[placeRow][placeCol] = board[row][col];

@@ -1,6 +1,6 @@
 import { bgRgb24, black, red} from "jsr:@std/fmt/colors";
 const pieces = {
-  "pawn": "♟️",
+  "pawn": "♟".padEnd(2),
   "rook": "♜".padEnd(2),
   "knight": "♘".padEnd(2),
   "bishop": "♝".padEnd(2),
@@ -10,6 +10,7 @@ const pieces = {
 };
 
 const getPiecesSymbol = (name, color) => {
+  if(name === undefined) return '  ';
   if (color === "black") {
     return black (pieces[name]);
   }
@@ -17,11 +18,6 @@ const getPiecesSymbol = (name, color) => {
 };
 
 const getSymbol = (char, value) => {
-  if (char === " ") {
-    return value % 2 === 0
-      ? bgRgb24("  ", {r:245, g:236, b:219})
-      : bgRgb24("  ", {r:140, g:105, b:70});
-  }
   const symbol = getPiecesSymbol(char.name,char.playerColor);
   return value % 2 === 0
     ? bgRgb24(symbol, {r:245, g:236, b:219})

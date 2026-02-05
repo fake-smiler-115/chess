@@ -3,7 +3,7 @@ const readMousePoints = async( reader) => {
   while(true) {
     const {value} = await reader.read();
     if (value[3] === 35) {
-      const col = Math.floor((value[4] - 32) / 2);
+      const col = Math.floor((value[4] - 33) / 2);
       const row = value[5] - 33;
       return [col, row];
     }

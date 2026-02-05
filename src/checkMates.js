@@ -36,20 +36,14 @@ export const checkToKing = (board, color, references) => {
 };
 
 export const isThereMoves = (board, color, references, otherColor) => {
-  const boardAccordingColor = board.map((x) => x.map((x) => x));
-  const allPieces = allColorPieces(boardAccordingColor, color);
+  const allPieces = allColorPieces(board, color);
   for (const piece of allPieces) {
     const col = piece[0];
     const row = piece[1];
-    const pieceName = boardAccordingColor[row][col].name;
-    const possibleMoves = references[pieceName](
-      boardAccordingColor,
-      col,
-      row,
-      color,
-    );
+    const pieceName = board[row][col].name;
+    const possibleMoves = references[pieceName](board,col,row,color);
     for (const move of possibleMoves) {
-      const dummyBoard = boardAccordingColor.map((x) => x.map((x) => x));
+      const dummyBoard = board.map((x) => x.map((x) => x));
       const moveCol = move[0];
       const moveRow = move[1];
       const pieceDetails = dummyBoard[row][col];

@@ -13,27 +13,11 @@ const drawBluePoints = (board, possibleMoves, color) => {
     const row = move[1];
     dummyBoard[row][col] = {name : 'p'};
   }
-  if (color === 'white') {
-    return drawBoard(dummyBoard);
-  }
-  drawBoard(reverseTheBoard(dummyBoard));
+     drawBoard(dummyBoard);
 }
 
-export const reverseTheBoard = (board) => {
-  const dummyBoard = [...board];
-  const reversedBoard = dummyBoard.reverse().map((x) => x.reverse());
-  return reversedBoard;
-}
-
-export const nextMove = async (board, playerId, references) => {
-  if (playerId[0] === 0) {
-    return await playGame(board, playerId, references, "white");
-  }
-
-  const reversedBoard = reverseTheBoard(board);
-  const result = await playGame(reversedBoard, playerId, references, "black");
-  board = reverseTheBoard(board);
-  return result;
+export const nextMove = async (board, playerId, references, color) => {
+    return await playGame(board, playerId, references, color);
 };
 
 export const playGame = async (board, playerId, references, color) => {

@@ -37,7 +37,7 @@ const main = async () => {
       }
     }
 
-    const result = await nextMove(dummyBoard, playerId, references);
+    const result = await nextMove(dummyBoard, playerId, references, colors[1 - colorId]);
     if (result && checkToKing(dummyBoard, colors[colorId], references)) {
       playerId[0] = 1 - playerId[0];
       continue;

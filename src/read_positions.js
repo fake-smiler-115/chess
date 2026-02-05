@@ -19,6 +19,5 @@ export const readPositions = async(color) => {
   const [col , row] =  await readMousePoints(  reader);
   writer.releaseLock();
   reader.releaseLock();
-  if (color === 'white') return [col, row];
-  return [7 - col, 7 - row];
+ return [col, row];
 }

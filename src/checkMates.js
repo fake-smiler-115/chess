@@ -1,5 +1,3 @@
-import { reverseTheBoard } from "./play_game.js";
-
 const allColorPieces = (board, color) => {
   const pieces = [];
   for (let i = 0; i < board.length; i++) {
@@ -25,21 +23,12 @@ const oppositeKingPosition = (board, pieceColor) => {
 };
 
 export const checkToKing = (board, color, references) => {
-  let dummyBoard = board.map((x) => x.map((x) => x));
-
-  if (color === "black") {
-    dummyBoard = reverseTheBoard(board);
-  }
-
+  const dummyBoard = board.map((x) => x.map((x) => x));
   const allPieces = allColorPieces(dummyBoard, color);
   const possibleMoves = allPieces.flatMap(([col, row, name]) =>
     references[name](dummyBoard, col, row, color)
   );
   const [kingCol, kingRow] = oppositeKingPosition(dummyBoard, color);
-  if (color === "black") {
-    dummyBoard = reverseTheBoard(board);
-  }
-
   return possibleMoves.filter(([col, row]) =>
     col === kingCol && row === kingRow
   )
@@ -47,10 +36,7 @@ export const checkToKing = (board, color, references) => {
 };
 
 export const isThereMoves = (board, color, references, otherColor) => {
-  let boardAccordingColor = board.map((x) => x.map((x) => x));
-  if (color === "black") {
-    boardAccordingColor = reverseTheBoard(boardAccordingColor);
-  }
+  const boardAccordingColor = board.map((x) => x.map((x) => x));
   const allPieces = allColorPieces(boardAccordingColor, color);
   for (const piece of allPieces) {
     const col = piece[0];
@@ -63,15 +49,12 @@ export const isThereMoves = (board, color, references, otherColor) => {
       color,
     );
     for (const move of possibleMoves) {
-      let dummyBoard = boardAccordingColor.map((x) => x.map((x) => x));
+      const dummyBoard = boardAccordingColor.map((x) => x.map((x) => x));
       const moveCol = move[0];
       const moveRow = move[1];
       const pieceDetails = dummyBoard[row][col];
       dummyBoard[row][col] = " ";
       dummyBoard[moveRow][moveCol] = pieceDetails;
-      if (otherColor === "black") {
-        dummyBoard = reverseTheBoard(dummyBoard);
-      }
       if (!checkToKing(dummyBoard, otherColor, references)) {
         return true;
       }

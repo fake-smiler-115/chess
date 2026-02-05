@@ -88,15 +88,33 @@ export const verticalPossibleMoves = (
   return possibleMoves;
 };
 
-export const pawnPossibleMoves = (board, col, row, color) => {
+const whitePawnPossibleMoves = (board, col, row, color) => {
   const possibleMoves = [];
   if (board[row - 1][col] === " ") possibleMoves.push([col, row - 1]);
-  if (row === 6 && board[row - 2][col] === " " &&  board[row - 1][col] === " ") {
+  if (row === 6 && board[row - 2][col] === " " && board[row - 1][col] === " ") {
     possibleMoves.push([col, row - 2]);
   }
   checkAdjacentOFpawn(board, row - 1, col - 1, color, possibleMoves);
   checkAdjacentOFpawn(board, row - 1, col + 1, color, possibleMoves);
   return possibleMoves;
+};
+
+const blackPawnPossibleMoves = (board, col, row, color) => {
+  const possibleMoves = [];
+  if (board[row + 1][col] === " ") possibleMoves.push([col, row + 1]);
+  if (row === 1 && board[row + 2][col] === " " && board[row + 1][col] === " ") {
+    possibleMoves.push([col, row + 2]);
+  }
+  checkAdjacentOFpawn(board, row + 1, col - 1, color, possibleMoves);
+  checkAdjacentOFpawn(board, row + 1, col + 1, color, possibleMoves);
+  return possibleMoves;
+};
+
+export const pawnPossibleMoves = (board, col, row, color) => {
+  if (color === "white") {
+    return whitePawnPossibleMoves(board, col, row, color);
+  }
+  return blackPawnPossibleMoves(board, col, row, color);
 };
 
 export const rookPossibleMoves = (board, col, row, color) => {

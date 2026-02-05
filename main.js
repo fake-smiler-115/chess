@@ -9,8 +9,7 @@ import {
 import { checkToKing, isThereMoves } from "./src/checkMates.js";
 import { createBoard } from "./src/create_board_array.js";
 import { drawBoard } from "./src/draw_board.js";
-import { nextMove } from "./src/play_game.js";
-import { readPositions } from "./src/read_positions.js";
+import { playGame } from "./src/play_game.js";
 
 const references = {
   "pawn": pawnPossibleMoves,
@@ -37,7 +36,7 @@ const main = async () => {
       }
     }
 
-    const result = await nextMove(dummyBoard, playerId, references, colors[1 - colorId]);
+    const result = await playGame(dummyBoard, playerId, references, colors[1 - colorId]);
     if (result && checkToKing(dummyBoard, colors[colorId], references)) {
       playerId[0] = 1 - playerId[0];
       continue;

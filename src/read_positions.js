@@ -10,7 +10,7 @@ const readMousePoints = async( reader) => {
   }
 }
 
-export const readPositions = async(color) => {
+export const readPositions = async() => {
   Deno.stdin.setRaw(true , {cbreak : true});
   const writer = Deno.stdout.writable.getWriter();
   const reader = Deno.stdin.readable.getReader( );

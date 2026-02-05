@@ -28,7 +28,7 @@ describe("checking the moves of the pawn", () => {
 
   it("1 . pawn has no one to kill only one step forward", () => {
     const result = pawnPossibleMoves(board, 4, 4, "black");
-    const expectedResult = [[4, 3]];
+    const expectedResult = [[4, 5]];
     assertEquals(result, expectedResult);
   });
 

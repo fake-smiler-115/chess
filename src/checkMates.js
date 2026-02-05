@@ -1,4 +1,4 @@
-const allColorPieces = (board, color) => {
+export const allColorPieces = (board, color) => {
   const pieces = [];
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
@@ -10,7 +10,7 @@ const allColorPieces = (board, color) => {
   return pieces;
 };
 
-const oppositeKingPosition = (board, pieceColor) => {
+export const oppositeKingPosition = (board, pieceColor) => {
   let color = "white";
   if (pieceColor === "white") color = "black";
   for (let i = 0; i < board.length; i++) {

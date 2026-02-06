@@ -31,6 +31,10 @@ const draw_board = async (conn, buffer) => {
 const readBoardGetPositions = async (conn, buffer) => {
   const n = await conn.read(buffer);
   const [board, color] = JSON.parse(decoder.decode(buffer.slice(0, n)));
+  if (board === 'true') {
+    console.log('winner is ', color);
+    conn.close();
+  }
   const result = await getThePositions(board, color);
   await conn.write(encoder.encode(JSON.stringify(result)));
   return result[0];

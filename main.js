@@ -26,7 +26,7 @@ const init = async () => {
     port: 8000,
     transport: "tcp",
   });
-  
+
   for await (const conn of listner) {
     connections.push(conn);
     console.log("one player conected ");
@@ -57,44 +57,31 @@ const checkCheckMate = (board, colors, colorId) => {
   }
 };
 
-const closeConnects = (conns) => {
+const declareWinnerAndCloseConnections = async(conns, color) => {
   for (const conn of conns) {
+    await conn.write(encoder.encode(JSON.stringify(['true', color])));
     conn.close();
   }
 };
 
-const writeBoard = async(conn, board) => {
- await conn.write(encoder.encode(JSON.stringify(board)))
-}
+const writeBoard = async (conn, board) => {
+  await conn.write(encoder.encode(JSON.stringify(board)));
+};
 
-const main = async () => {
-  const colors = ["black", "white"];
-  const playerId = [0];
-  const conns = await init();
-  let board = createBoard();
-  await printBoardsToConnections(conns, board);
+const runGame = async (board, connections, playerId, colors) => {
   while (true) {
     const index = playerId[0];
-    await writeBoard(conns[index], board);
-    // await conns[index].write(encoder.encode(JSON.stringify(board)));
-    let dummyBoard = board.map((x) => x.map((x) => x));
+    await writeBoard(connections[index], board);
+    const dummyBoard = board.map((x) => x.map((x) => x));
     const isCheckmate = checkCheckMate(board, colors, index);
     if (isCheckmate) {
-      closeConnects(conns);
-      return console.log(`${colors[index]} won the game !`);
+      return colors[index];
     }
 
     const result = await playGame(
-      conns[index],
-      dummyBoard,
-      playerId,
-      references,
-      colors[1 - index],
-    );
+     connections[index],dummyBoard,playerId,references,colors[1 - index]);
     if (result === false) continue;
-    console.log(result);
-    
-    await conns[index].write(encoder.encode(JSON.stringify(dummyBoard)));
+    await writeBoard(connections[index], dummyBoard);
 
     if (result && checkToKing(dummyBoard, colors[index], references)) {
       playerId[0] = 1 - playerId[0];
@@ -104,4 +91,14 @@ const main = async () => {
   }
 };
 
-await main();
+const main = async (connections, playerId, colors) => {
+  const board = createBoard();
+  await printBoardsToConnections(connections, board);
+  const color = await runGame(board, connections, playerId, colors);
+  await printBoardsToConnections(connections, board);
+  await declareWinnerAndCloseConnections(connections, color);
+  console.log(color + " won");
+};
+
+const connections = await init();
+await main(connections, [0], ["black", "white"]);

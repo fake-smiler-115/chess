@@ -1,8 +1,8 @@
-import { bgRgb24, black, red} from "jsr:@std/fmt/colors";
+import { bgRgb24, black, gray} from "jsr:@std/fmt/colors";
 const pieces = {
   "pawn": "♟".padEnd(2),
   "rook": "♜".padEnd(2),
-  "knight": "♘".padEnd(2),
+  "knight": "♞".padEnd(2),
   "bishop": "♝".padEnd(2),
   "queen": "♕".padEnd(2),
   "king": "♔".padEnd(2),
@@ -14,7 +14,7 @@ const getPiecesSymbol = (name, color) => {
   if (color === "black") {
     return black (pieces[name]);
   }
-  return  red(pieces[name])
+  return gray (pieces[name])
 };
 
 const getSymbol = (char, value) => {

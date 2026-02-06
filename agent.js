@@ -19,8 +19,6 @@ const getThePositions = async (board, color) => {
 
 const readPlacePositons = async (conn) => {
   const result = await readPositions();
-  console.log(result);
-
   await conn.write(encoder.encode(JSON.stringify(result)));
 };
 

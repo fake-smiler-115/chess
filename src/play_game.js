@@ -32,6 +32,8 @@ const swapIfPossible =  ( board , possibleMoves, playerId, values) => {
       return true;
     }
   }
+
+  return 'nothing';
 }
  
 export const playGame = async (conn ,board, playerId, references, color) => {

@@ -35,22 +35,35 @@ const init = async () => {
 
 const encoder = new TextEncoder()
 
+const printBoardsToConnections = async(conns, board) => {
+  for (const conn of conns) {
+    await conn.write(encoder.encode(JSON.stringify(board)));
+  } 
+}
+
+const checkCheckMate = (board, colors, colorId) => {
+const isCheck = checkToKing(board, colors[colorId], references);
+    if (isCheck) {
+      console.log("check", isCheck);
+      if (!isThereMoves(board, colors[1 - colorId],references,  colors[colorId] )) {
+        return true;
+      }
+    }
+}
+
 const main = async () => {
   const colors = ['black', 'white'];
   const playerId = [0];
   const conns = await init();
   let board = createBoard();
+  await printBoardsToConnections(conns, board);
   while (true) {
     const colorId = playerId[0];
     await conns[colorId].write(encoder.encode(JSON.stringify(board)));
     let dummyBoard = board.map((x) => x.map((x) => x));
-    const isCheck = checkToKing(board, colors[colorId], references);
-    if (isCheck) {
-      console.log("check", isCheck);
-      if (!isThereMoves(board, colors[1 - colorId],references,  colors[colorId] )) {
-        return console.log(`${colors[colorId]} won the game !`);
-      }
-    }
+    const isCheckmate = checkCheckMate(board, colors, colorId);
+    if (isCheckmate) 
+      return console.log(`${colors[colorId]} won the game !`);
 
     const result = await playGame(conns[colorId] , dummyBoard, playerId, references, colors[1 - colorId]);
     if (result && checkToKing(dummyBoard, colors[colorId], references)) {
@@ -58,6 +71,7 @@ const main = async () => {
       continue;
     }
     board = dummyBoard;
+    if (result)
     await conns[colorId].write(encoder.encode(JSON.stringify(board)));
   }
 };

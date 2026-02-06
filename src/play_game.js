@@ -2,7 +2,7 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 
-const drawBluePoints = async (board, possibleMoves, conn) => {
+const writeBluePoints = async (board, possibleMoves, conn) => {
   const dummyBoard= board.map(x => x.map(x => x));
   for (const move of possibleMoves) {
     const col = move[0];
@@ -21,18 +21,17 @@ const getThePositionValues = async(conn,  buffer) => {
   return JSON.parse(decoder.decode(buffer.slice(0,n)));
 }
 
-const swapIfPossible = async (conn, board , possibleMoves, playerId, values) => {
+const swapIfPossible =  ( board , possibleMoves, playerId, values) => {
   const [col ,row, placeCol, placeRow] = values;
  for (const move of possibleMoves) {
     if (move[0] === placeCol && move[1] === placeRow) {
       board[placeRow][placeCol] = board[row][col];
       board[row][col] = " ";
       playerId[0] = 1 - playerId[0];
-      await conn.write(encoder.encode(JSON.stringify(true)));
+      console.log('inside loop');
       return true;
     }
   }
-   await conn.write(encoder.encode(JSON.stringify(false)));
 }
  
 export const playGame = async (conn ,board, playerId, references, color) => {
@@ -43,7 +42,7 @@ export const playGame = async (conn ,board, playerId, references, color) => {
 
   const pieceName = board[row][col].name;
   const possibleMoves = references[pieceName](board, col, row, color);
-  await drawBluePoints(board, possibleMoves,  conn);
+  await writeBluePoints(board, possibleMoves,  conn);
   const position = await getThePositionValues(conn, buffer);
-  return await swapIfPossible(conn,board, possibleMoves, playerId, [col, row, ...position])
+  return  swapIfPossible(board, possibleMoves, playerId, [col, row, ...position])
 };

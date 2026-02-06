@@ -30,19 +30,12 @@ const draw_board = async (conn, buffer) => {
   drawBoard(board);
 };
 
-const getPositions = async (conn, buffer) => {
+const readBoardGetPositions = async (conn, buffer) => {
   const n = await conn.read(buffer);
   const [board, color] = JSON.parse(decoder.decode(buffer.slice(0, n)));
   const result = await getThePositions(board, color);
   await conn.write(encoder.encode(JSON.stringify(result)));
   return result[0];
-};
-
-const isPossibleMove = async (conn, buffer) => {
-  const n = await conn.read(buffer);
-  const isPossible = JSON.parse(decoder.decode(buffer.slice(0, n)));
-  console.log(isPossible);
-  return isPossible;
 };
 
 const main = async () => {
@@ -54,14 +47,13 @@ const main = async () => {
   await draw_board(conn, buffer);
   while (true) {
     await draw_board(conn, buffer);
-    if (!await getPositions(conn, buffer)) {
+
+    if (!await readBoardGetPositions(conn, buffer)) {
       continue;
     }
     await draw_board(conn, buffer);
     await readPlacePositons(conn);
-    if (await isPossibleMove(conn, buffer)) {
-      await draw_board(conn, buffer);
-    }
+    await draw_board(conn, buffer);
   }
 };
 

@@ -38,9 +38,9 @@ const init = async () => {
 
 const encoder = new TextEncoder();
 
-const printBoardsToConnections = async (conns, board) => {
+const assignColorAndBoard = async (conns, board, colors) => {
   for (const conn of conns) {
-    await conn.write(encoder.encode(JSON.stringify(board)));
+    await conn.write(encoder.encode(JSON.stringify([board, colors.shift()])));
   }
 };
 
@@ -71,6 +71,8 @@ const startGame = async (board, connections, playerId, colors) => {
   while (true) {
     const index = playerId[0];
     await writeBoard(connections[index], board);
+    console.log('game');
+    
     const dummyBoard = board.map((x) => x.map((x) => x));
     const isCheckmate = checkCheckMate(board, colors, index);
     if (isCheckmate) {
@@ -97,7 +99,7 @@ const startGame = async (board, connections, playerId, colors) => {
 
 const main = async (connections, playerId, colors) => {
   const board = createBoard();
-  await printBoardsToConnections(connections, board);
+  await assignColorAndBoard(connections, board,['white', 'black']);
   const [color, index] = await startGame(board, connections, playerId, colors);
   await writeBoard(connections[1 - index], board);
   await declareWinnerAndCloseConnections(connections, color);

@@ -24,7 +24,12 @@ const getSymbol = (char, value) => {
     : bgRgb24(symbol, {r:140, g:105, b:70});
 };
 
-export const drawBoard = (board) => {
+const reverseBaord = (board) => 
+   board.map(row => row.map(x => x).reverse()).reverse();
+
+
+export const drawBoard = (board, color) => {
+  if (color === 'black') board = reverseBaord(board);
   let stringBoard = "";
 
   for (let i = 0; i < board.length; i++) {

@@ -58,7 +58,7 @@ const checkCheckMate = (board, colors, colorId) => {
 
 const declareWinnerAndCloseConnections = async (conns, color) => {
   for (const conn of conns) {
-    await conn.write(encoder.encode(JSON.stringify(["true", color])));
+    await conn.write(encoder.encode(JSON.stringify(["won", color])));
     conn.close();
   }
 };

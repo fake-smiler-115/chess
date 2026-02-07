@@ -3,10 +3,19 @@ import { readPositions } from "./src/read_positions.js";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+const init = async() => {
+    const conn = await Deno.connect({
+    port: 8000,
+    transport: "tcp",
+  });
+  return conn;
+}
+
 export const isvalidMove = (board, col, row, color) => {
   if (board[row][col].playerColor === color) return true;
   return false;
 };
+
 const getThePositions = async (board, color) => {
   const [col, row] = await readPositions();
   const isValid = isvalidMove(board, col, row, color);
@@ -28,35 +37,40 @@ const draw_board = async (conn, buffer) => {
   drawBoard(board);
 };
 
-const readBoardGetPositions = async (conn, buffer) => {
-  const n = await conn.read(buffer);
-  const [board, color] = JSON.parse(decoder.decode(buffer.slice(0, n)));
-  if (board === 'true') {
-    console.log('winner is ', color);
-    conn.close();
-  }
+const readAndWritePositions = async (conn, board, color) => {
   const result = await getThePositions(board, color);
   await conn.write(encoder.encode(JSON.stringify(result)));
-  return result[0];
+  return result;
 };
 
-const main = async () => {
-  const conn = await Deno.connect({
-    port: 8000,
-    transport: "tcp",
-  });
-  const buffer = new Uint8Array(10000);
-  await draw_board(conn, buffer);
-  while (true) {
-    await draw_board(conn, buffer);
+const handler = async (conn, buffer) => {
+const n = await conn.read(buffer);
+  const [board, color] = JSON.parse(decoder.decode(buffer.slice(0, n)));
+  if (board !== 'won') {
+    return await readAndWritePositions(conn, board, color);
+  }
+  return ['won', color];
+}
 
-    if (!await readBoardGetPositions(conn, buffer)) {
-      continue;
-    }
+const startGame = async(conn, buffer) => {
+while (true) {
+    await draw_board(conn, buffer);
+    const [status, color] = await handler(conn, buffer);
+    if (status === 'won') return color;
+    if (!status) continue;
     await draw_board(conn, buffer);
     await readPlacePositons(conn);
     await draw_board(conn, buffer);
   }
+}
+
+const main = async () => {
+  const conn = await init();
+  const buffer = new Uint8Array(10000);
+  await draw_board(conn, buffer);
+ const color =  await startGame(conn, buffer);
+ console.log('winner is ', color);
+ conn.close();
 };
 
 await main();

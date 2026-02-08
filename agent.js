@@ -3,7 +3,8 @@ import { drawBoard } from "./src/draw_board.js";
 import { readPositions } from "./src/read_positions.js";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-
+const boardStyle = Math.round( Math.random() * 3);
+ 
 const init = async () => {
   const conn = await Deno.connect({
     port: 8000,
@@ -35,7 +36,7 @@ const readPlacePositons = async (conn, color) => {
 const fetchBoardAndDraw = async (conn, buffer, color) => {
   const n = await conn.read(buffer);
   const board = JSON.parse(decoder.decode(buffer.slice(0, n)));
-  drawBoard(board, color);
+  drawBoard(board, color, boardStyle);
 };
 
 const readAndWritePositions = async (conn, board, color, defaultColor) => {
@@ -75,7 +76,7 @@ const main = async () => {
   const conn = await init();
   const buffer = new Uint8Array(10000);
   const [board, color] = await getBoardAndColor(conn, buffer);
-  drawBoard(board, color);
+  drawBoard(board, color, boardStyle);
   const winner = await playGame(conn, buffer, color);
   console.log("winner is ", winner);
   conn.close();

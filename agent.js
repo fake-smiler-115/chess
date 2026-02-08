@@ -3,8 +3,9 @@ import { drawBoard } from "./src/draw_board.js";
 import { readPositions } from "./src/read_positions.js";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-const boardStyle = Math.round( Math.random() * 3);
- 
+const boardStyle = 0;
+// Math.round( Math.random() * 3)
+
 const init = async () => {
   const conn = await Deno.connect({
     port: 8000,
@@ -14,8 +15,10 @@ const init = async () => {
 };
 
 export const isvalidMove = (board, col, row, color) => {
-  if (board[row][col].playerColor === color) return true;
-  return false;
+  try {
+    if (board[row][col].playerColor === color) return true;
+    return false;
+  } catch {return false;}
 };
 
 const getThePositions = async (board, color, defaultColor) => {

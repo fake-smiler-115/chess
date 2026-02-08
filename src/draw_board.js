@@ -5,19 +5,19 @@ const boardFilters = {
   1 : [
   { r: 17,  g: 17,  b: 17  }, 
   { r: 255, g: 255, b: 255 },
-  { r: 245, g: 222, b: 179 },
+  { r: 100, g: 100, b: 100 },
   { r: 139, g: 69,  b: 19  } 
 ],
 2: [
   { r: 17,  g: 17,  b: 17  },
   { r: 250, g: 250, b: 250 },
-  { r: 232, g: 243, b: 232 },
+  { r: 100, g: 100, b: 100 },
   { r: 92,  g: 122, b: 72  }
 ],
 3 : [
   { r: 58,  g: 42,  b: 26  },
   { r: 255, g: 246, b: 229 },
-  { r: 248, g: 237, b: 219 },
+  { r: 120, g: 120, b: 120 },
   { r: 165, g: 122, b: 85  }
 ],
   4 : [
@@ -71,7 +71,7 @@ const reverseBaord = (board) =>
    board.map(row => row.map(x => x).reverse()).reverse();
 
 
-export const drawBoard = (board, color, boardOption = 2) => {
+export const drawBoard = (board, color, boardOption) => {
   if (color === 'black') board = reverseBaord(board);
   let stringBoard = "";
 

@@ -57,12 +57,14 @@ const handler = async (conn, buffer, defaultColor) => {
 const playGame = async (conn, buffer, color) => {
   while (true) {
     await fetchBoardAndDraw(conn, buffer, color);
+    console.log('Your turn now : ', color);
     const [status, winner] = await handler(conn, buffer, color);
     if (status === "won") return winner;
     if (!status) continue;
     await fetchBoardAndDraw(conn, buffer, color);
     await readPlacePositons(conn, color);
     await fetchBoardAndDraw(conn, buffer, color);
+    console.log('waiting for other player to move .....');
   }
 };
 
@@ -75,6 +77,7 @@ const getBoardAndColor = async(conn, buffer) => {
 const main = async () => {
   const conn = await init();
   const buffer = new Uint8Array(10000);
+  console.log('Waiting for other player .......');
   const [board, color] = await getBoardAndColor(conn, buffer);
   drawBoard(board, color, boardStyle);
   const winner = await playGame(conn, buffer, color);

@@ -70,8 +70,8 @@ const writeBoard = async (conn, board) => {
 const startGame = async (board, connections, playerId, colors) => {
   while (true) {
     const index = playerId[0];
+    console.log(colors[1 - index]);
     await writeBoard(connections[index], board);
-    console.log('game');
     
     const dummyBoard = board.map((x) => x.map((x) => x));
     const isCheckmate = checkCheckMate(board, colors, index);

@@ -20,13 +20,16 @@ const getThePositionValues = async (conn, buffer) => {
 };
 
 const swapIfPossible = (board, possibleMoves, playerId, values) => {
-  const [col, row, placeCol, placeRow] = values;
+  const [col, row, placeCol, placeRow, pieceName, color] = values;
   for (const move of possibleMoves) {
     if (move[0] === placeCol && move[1] === placeRow) {
       board[placeRow][placeCol] = board[row][col];
       board[row][col] = " ";
       playerId[0] = 1 - playerId[0];
-      console.log("inside loop");
+      // if (pieceName === 'pawn' &&  [0,7].includes(placeRow)) {
+      //   const pieceName = prompt('select the piece');
+      //   board[placeRow][placeCol] = { playerColor: color, name: pieceName };
+      // }
       return true;
     }
   }
@@ -48,5 +51,6 @@ export const playTheMove = async (conn, board, playerId, references, color) => {
     col,
     row,
     ...position,
-  ]);
+    pieceName, color
+  ] );
 };

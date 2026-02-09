@@ -40,6 +40,7 @@ const fetchBoardAndDraw = async (conn, buffer, color) => {
   const n = await conn.read(buffer);
   const board = JSON.parse(decoder.decode(buffer.slice(0, n)));
   drawBoard(board, color, boardStyle);
+  console.log(n);
 };
 
 const readAndWritePositions = async (conn, board, color, defaultColor) => {

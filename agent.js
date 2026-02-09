@@ -37,10 +37,10 @@ const readPlacePositons = async (conn, color) => {
 };
 
 const fetchBoardAndDraw = async (conn, buffer, color) => {
-  const n = await conn.read(buffer);
-  const board = JSON.parse(decoder.decode(buffer.slice(0, n)));
+
+  const board = await readData(conn);
   drawBoard(board, color, boardStyle);
-  console.log(n);
+  // console.log(n);
 };
 
 const readAndWritePositions = async (conn, board, color, defaultColor) => {
@@ -50,8 +50,9 @@ const readAndWritePositions = async (conn, board, color, defaultColor) => {
 };
 
 const handler = async (conn, buffer, defaultColor) => {
-  const n = await conn.read(buffer);
-  const [board, color] = JSON.parse(decoder.decode(buffer.slice(0, n)));
+  
+  console.log('after handler');
+  const [board, color] = await readData(conn);
   if (board !== "won") {
     return await readAndWritePositions(conn, board, color, defaultColor);
   }
@@ -72,17 +73,32 @@ const playGame = async (conn, buffer, color) => {
   }
 };
 
-const getBoardAndColor = async(conn, buffer) => {
-  const n = await conn.read(buffer);
-  const  response = JSON.parse(decoder.decode(buffer.slice(0, n)));
-  return response;
+const readData = async(conn) => {
+  let str = '';
+  const buffer = new Uint8Array(1);
+  while (true) {
+    const n=  await conn.read(buffer);
+    const value = decoder.decode(buffer.slice(0,n));
+    if (value === '\n') {
+      return JSON.parse(str);
+    }
+    str += value;
+  }
 }
+
+// const getBoardAndColor = async(conn, buffer) => {
+//   const n = await conn.read(buffer);
+//   const  response = JSON.parse(decoder.decode(buffer.slice(0, n)));
+//   return response;
+// }
 
 const main = async () => {
   const conn = await init();
   const buffer = new Uint8Array(10000);
   console.log('Waiting for other player .......');
-  const [board, color] = await getBoardAndColor(conn, buffer);
+  const [board, color] = await readData(conn);
+  console.log(board);
+  
   drawBoard(board, color, boardStyle);
   const winner = await playGame(conn, buffer, color);
   console.log("winner is ", winner);

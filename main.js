@@ -40,7 +40,7 @@ const encoder = new TextEncoder();
 
 const assignColorAndBoard = async (conns, board, colors) => {
   for (const conn of conns) {
-    await conn.write(encoder.encode(JSON.stringify([board, colors.shift()])));
+    await conn.write(encoder.encode(JSON.stringify([board, colors.shift()]) + '\n'));
   }
 };
 
@@ -58,13 +58,13 @@ const checkCheckMate = (board, colors, colorId) => {
 
 const declareWinnerAndCloseConnections = async (conns, color) => {
   for (const conn of conns) {
-    await conn.write(encoder.encode(JSON.stringify(["won", color])));
+    await conn.write(encoder.encode(JSON.stringify(["won", color])+ '\n'));
     conn.close();
   }
 };
 
 const writeBoard = async (conn, board) => {
-  await conn.write(encoder.encode(JSON.stringify(board)));
+  await conn.write(encoder.encode(JSON.stringify(board)+ '\n'));
 };
 
 const startGame = async (board, connections, playerId, colors) => {

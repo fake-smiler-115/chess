@@ -8,11 +8,11 @@ const writeBluePoints = async (board, possibleMoves, conn) => {
     const row = move[1];
     dummyBoard[row][col] = { name: "p" };
   }
-  await conn.write(encoder.encode(JSON.stringify(dummyBoard)));
+  await conn.write(encoder.encode(JSON.stringify(dummyBoard) + '\n'));
 };
 
 const writeBoard = async (conn, board, color) =>
-  await conn.write(encoder.encode(JSON.stringify([board, color])));
+  await conn.write(encoder.encode(JSON.stringify([board, color]) + '\n'));
 
 const getThePositionValues = async (conn, buffer) => {
   const n = await conn.read(buffer);

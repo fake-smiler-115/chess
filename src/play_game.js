@@ -19,22 +19,31 @@ const getThePositionValues = async (conn, buffer) => {
   return JSON.parse(decoder.decode(buffer.slice(0, n)));
 };
 
-const swapIfPossible = (board, possibleMoves, playerId, values) => {
+const pawnPromotion = async(conn, board, pieceName, color, placeRow, placeCol) => {
+  if (!(pieceName === 'pawn' &&  [0,7].includes(placeRow))) {
+    await conn.write(encoder.encode(JSON.stringify(false)+ '\n'));
+    return; 
+  }
+  const buffer = new Uint8Array(254);
+  await conn.write(encoder.encode(JSON.stringify(true) + '\n'));
+  const n = await conn.read(buffer);
+  const selectedPiece = JSON.parse(decoder.decode(buffer.slice(0,n)));
+  board[placeRow][placeCol] = { playerColor: color, name: selectedPiece};
+}
+
+const swapIfPossible = async(conn, board, possibleMoves, playerId, values) => {
   const [col, row, placeCol, placeRow, pieceName, color] = values;
   for (const move of possibleMoves) {
     if (move[0] === placeCol && move[1] === placeRow) {
       board[placeRow][placeCol] = board[row][col];
       board[row][col] = " ";
       playerId[0] = 1 - playerId[0];
-      // if (pieceName === 'pawn' &&  [0,7].includes(placeRow)) {
-      //   const pieceName = prompt('select the piece');
-      //   board[placeRow][placeCol] = { playerColor: color, name: pieceName };
-      // }
+      await pawnPromotion(conn, board, pieceName, color, placeRow, placeCol);
       return true;
     }
   }
-
-  return "unnessary return statement";
+    await conn.write(encoder.encode(JSON.stringify(false)+ '\n'));
+  // return "unnessary return statement";
 };
 
 export const playTheMove = async (conn, board, playerId, references, color) => {
@@ -47,7 +56,7 @@ export const playTheMove = async (conn, board, playerId, references, color) => {
   const possibleMoves = references[pieceName](board, col, row, color);
   await writeBluePoints(board, possibleMoves, conn);
   const position = await getThePositionValues(conn, buffer);
-  return swapIfPossible(board, possibleMoves, playerId, [
+  return await swapIfPossible(conn, board, possibleMoves, playerId, [
     col,
     row,
     ...position,

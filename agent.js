@@ -3,8 +3,8 @@ import { drawBoard } from "./src/draw_board.js";
 import { readPositions } from "./src/read_positions.js";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-const boardStyle = 0;
-// Math.round( Math.random() * 3)
+const boardStyle = Math.round( Math.random() * 3);
+
 
 const init = async () => {
   const conn = await Deno.connect({
@@ -36,11 +36,9 @@ const readPlacePositons = async (conn, color) => {
   await conn.write(encoder.encode(JSON.stringify(result)));
 };
 
-const fetchBoardAndDraw = async (conn, buffer, color) => {
-
+const fetchBoardAndDraw = async (conn,  color) => {
   const board = await readData(conn);
   drawBoard(board, color, boardStyle);
-  // console.log(n);
 };
 
 const readAndWritePositions = async (conn, board, color, defaultColor) => {
@@ -49,9 +47,7 @@ const readAndWritePositions = async (conn, board, color, defaultColor) => {
   return result;
 };
 
-const handler = async (conn, buffer, defaultColor) => {
-  
-  console.log('after handler');
+const handler = async (conn,  defaultColor) => {
   const [board, color] = await readData(conn);
   if (board !== "won") {
     return await readAndWritePositions(conn, board, color, defaultColor);
@@ -59,16 +55,31 @@ const handler = async (conn, buffer, defaultColor) => {
   return ["won", color];
 };
 
-const playGame = async (conn, buffer, color) => {
+const pawnPromotion = async(conn) => {
+  const isConvert = await readData(conn);
+  if (!isConvert) return ;
   while (true) {
-    await fetchBoardAndDraw(conn, buffer, color);
+    const possiblePieces = ['rook', 'queen', 'bishop', 'knight'];
+    const pieceName = prompt('enter the pieceName');
+    if (possiblePieces.includes(pieceName)) {
+      await conn.write(encoder.encode(JSON.stringify(pieceName)));
+      return;
+    }
+  }
+  
+}
+
+const playGame = async (conn, color) => {
+  while (true) {
+    await fetchBoardAndDraw(conn, color);
     console.log('Your turn now : ', color);
-    const [status, winner] = await handler(conn, buffer, color);
+    const [status, winner] = await handler(conn, color);
     if (status === "won") return winner;
     if (!status) continue;
-    await fetchBoardAndDraw(conn, buffer, color);
+    await fetchBoardAndDraw(conn, color);
     await readPlacePositons(conn, color);
-    await fetchBoardAndDraw(conn, buffer, color);
+    await pawnPromotion(conn);
+    await fetchBoardAndDraw(conn, color);
     console.log('waiting for other player to move .....');
   }
 };
@@ -86,21 +97,14 @@ const readData = async(conn) => {
   }
 }
 
-// const getBoardAndColor = async(conn, buffer) => {
-//   const n = await conn.read(buffer);
-//   const  response = JSON.parse(decoder.decode(buffer.slice(0, n)));
-//   return response;
-// }
-
 const main = async () => {
   const conn = await init();
-  const buffer = new Uint8Array(10000);
   console.log('Waiting for other player .......');
   const [board, color] = await readData(conn);
   console.log(board);
   
   drawBoard(board, color, boardStyle);
-  const winner = await playGame(conn, buffer, color);
+  const winner = await playGame(conn, color);
   console.log("winner is ", winner);
   conn.close();
 };

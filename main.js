@@ -76,7 +76,7 @@ const startGame = async (board, connections, playerId, colors) => {
     const dummyBoard = board.map((x) => x.map((x) => x));
     const isCheckmate = checkCheckMate(board, colors, index);
     if (isCheckmate) {
-      return [colors[index], index];
+      return [colors[index], index, board];
     }
 
     const result = await playTheMove(
@@ -100,8 +100,8 @@ const startGame = async (board, connections, playerId, colors) => {
 const main = async (connections, playerId, colors) => {
   const board = createBoard();
   await assignColorAndBoard(connections, board,['white', 'black']);
-  const [color, index] = await startGame(board, connections, playerId, colors);
-  await writeBoard(connections[1 - index], board);
+  const [color, index, winningBoard] = await startGame(board, connections, playerId, colors);
+  await writeBoard(connections[1 - index], winningBoard);
   await declareWinnerAndCloseConnections(connections, color);
   console.log(color + " won");
 };
